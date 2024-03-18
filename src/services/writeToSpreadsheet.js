@@ -6,6 +6,9 @@ const writeToSpreadsheet = async (
   spreadsheetId
 ) => {
   try {
+    console.log("token : ", accessToken);
+    console.log("id : ", spreadsheetId);
+
     const token = accessToken;
     const id = spreadsheetId;
     const range = "Sheet1!A1:C1";
@@ -33,6 +36,12 @@ const writeToSpreadsheet = async (
       return {
         message: `${data.updates.updatedCells} cells updated.`,
         status: "success",
+      };
+    } else {
+      return {
+        message: "Something went wrong : " + response.status,
+        details: response.statusText,
+        status: "failed",
       };
     }
   } catch (error) {
