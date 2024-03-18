@@ -6,9 +6,10 @@ import "./App.css";
 
 const App = () => {
   const [image, setImage] = useState(null);
-  const [result, setResult] = useState({ nik: "", nama: "", ttl: "" });
   const [text, setText] = useState("");
   const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [result, setResult] = useState({ nik: "", nama: "", ttl: "" });
+  const [auth, setAuth] = useState(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -65,6 +66,7 @@ const App = () => {
   const loginGoogle = async () => {
     try {
       const response = await authorize();
+      setAuth(response);
       window.location.href = response;
     } catch (error) {
       console.error(error);
@@ -75,8 +77,16 @@ const App = () => {
     writeToSpreadsheet(result.nik, result.nama, result.ttl);
   };
 
+  const isAuthorized = () => {
+    if (auth) {
+      setShowAuthPopup(false);
+    } else {
+      setShowAuthPopup(true);
+    }
+  };
+
   useEffect(() => {
-    setShowAuthPopup(true);
+    isAuthorized();
   }, []);
 
   return (
