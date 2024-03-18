@@ -1,12 +1,14 @@
-// App.js
 import React, { useState, useEffect } from "react";
 import Tesseract from "tesseract.js";
-import authorize from "./services/authorize";
 import writeToSpreadsheet from "./services/writeToSpreadsheet";
+import authorize from "./services/authorize";
+import "./App.css";
 
 const App = () => {
   const [image, setImage] = useState(null);
+  const [result, setResult] = useState({ nik: "", nama: "", ttl: "" });
   const [text, setText] = useState("");
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -19,18 +21,18 @@ const App = () => {
 
   const detectText = () => {
     if (!image) {
-      alert("Pilih gambar terlebih dahulu.");
+      alert("Please select an image first.");
       return;
     }
 
     Tesseract.recognize(
       image,
-      "ind", // Bahasa yang digunakan untuk OCR (dalam hal ini, bahasa Indonesia)
+      "eng", // Language used for OCR (in this case, English)
       {
-        logger: (m) => console.log(m), // Logger opsional untuk melihat proses OCR
+        logger: (m) => console.log(m), // Optional logger to see OCR process
         tessedit_char_whitelist:
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./-@", // Filter karakter yang diizinkan
-        psm: 6, // Page Segmentation Mode untuk mengenali blok teks
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./-@", // Allowed character filter
+        psm: 6, // Page Segmentation Mode for recognizing text blocks
       }
     )
       .then(({ data: { text } }) => {
@@ -51,29 +53,63 @@ const App = () => {
             ttl = line.substring(16).trim();
           }
         });
-
-        setText(`NIK: ${nik}\nNama: ${nama}\nTempat/Tgl Lahir: ${ttl}`);
-        writeToSpreadsheet(nik, nama, ttl);
+        setResult({ nik: nik, nama: nama, ttl: ttl });
+        setText(`NIK: ${nik}\nName: ${nama}\nPlace/Date of Birth: ${ttl}`);
       })
       .catch((error) => {
-        alert("Deteksi teks gagal. Silakan coba lagi.");
+        alert("Text detection failed. Please try again.");
         console.error(error);
       });
   };
 
+  const loginGoogle = async () => {
+    try {
+      const response = await authorize();
+      window.location.href = response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const exportToSheet = () => {
+    writeToSpreadsheet(result.nik, result.nama, result.ttl);
+  };
+
   useEffect(() => {
-    authorize();
+    setShowAuthPopup(true);
   }, []);
 
   return (
-    <div>
-      <h1>Deteksi Bagian KTP</h1>
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-      <button onClick={detectText}>Deteksi Teks</button>
-      <div>
-        <h2>Hasil Deteksi</h2>
-        <pre>{text}</pre>
+    <div className="container">
+      <div className="ktp-section">
+        <h1>ID Card Text Detection</h1>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <button className="detect-btn" onClick={detectText}>
+          Detect Text
+        </button>
+        <div>
+          <h2>Detection Result :</h2>
+          {text ? (
+            <>
+              <pre>{text}</pre>
+              <button className="detect-btn" onClick={exportToSheet}>
+                Export to Spreadsheet
+              </button>
+            </>
+          ) : (
+            "No ID Card detected"
+          )}
+        </div>
       </div>
+      {showAuthPopup && (
+        <>
+          <div className="overlay" />
+          <div className="auth-popup">
+            <p>Please login Google Account for access this app</p>
+            <button onClick={loginGoogle}>Authorize</button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
