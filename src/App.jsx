@@ -69,7 +69,7 @@ const App = () => {
     }
   };
 
-  const exportToSheet = () => {
+  const exportToSheet = async () => {
     const accessToken =
       "0AeaYSHBe__4r1xz6wiTx4dnRgrMifz05KAVsQ_AChyZz7hILDADLZHKGksoePgZERp_eAg";
     const spreadsheetId = "1tvLMfI6bcKXt5THDCKPspeffC47q_aztErhJ6whvoOM";
@@ -81,13 +81,20 @@ const App = () => {
     if (!code) {
       authorizeGoogle();
     } else {
-      writeToSpreadsheet(
+      const result = await writeToSpreadsheet(
         result.nik,
         result.nama,
         result.ttl,
         accessToken,
         spreadsheetId
       );
+      if (result.status === "success") {
+        alert("Cells updated!");
+      } else if (result.status === "failed") {
+        alert("Failed to update cells : ", result.message);
+      } else {
+        alert("Something went wrong :", result.message);
+      }
     }
   };
 
