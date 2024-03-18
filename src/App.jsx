@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Tesseract from "tesseract.js";
 import writeToSpreadsheet from "./services/writeToSpreadsheet";
 import authorize from "./services/authorize";
@@ -26,16 +26,12 @@ const App = () => {
       return;
     }
 
-    Tesseract.recognize(
-      image,
-      "eng", // Language used for OCR (in this case, English)
-      {
-        logger: (m) => console.log(m), // Optional logger to see OCR process
-        tessedit_char_whitelist:
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./-@", // Allowed character filter
-        psm: 6, // Page Segmentation Mode for recognizing text blocks
-      }
-    )
+    Tesseract.recognize(image, "eng", {
+      logger: (m) => console.log(m),
+      tessedit_char_whitelist:
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./-@",
+      psm: 6,
+    })
       .then(({ data: { text } }) => {
         const cleanedText = cleanText(text);
 
@@ -63,7 +59,7 @@ const App = () => {
       });
   };
 
-  const loginGoogle = async () => {
+  const authorizeGoogle = async () => {
     try {
       const response = await authorize();
       setAuth(response);
@@ -74,20 +70,9 @@ const App = () => {
   };
 
   const exportToSheet = () => {
-    writeToSpreadsheet(result.nik, result.nama, result.ttl);
+    authorizeGoogle();
+    // writeToSpreadsheet(result.nik, result.nama, result.ttl);
   };
-
-  const isAuthorized = () => {
-    if (auth) {
-      setShowAuthPopup(false);
-    } else {
-      setShowAuthPopup(true);
-    }
-  };
-
-  useEffect(() => {
-    isAuthorized();
-  }, []);
 
   return (
     <div className="container">
