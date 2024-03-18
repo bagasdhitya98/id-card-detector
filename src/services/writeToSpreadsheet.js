@@ -5,18 +5,18 @@ const writeToSpreadsheet = async (
   accessToken,
   spreadsheetId
 ) => {
-  const accessToken = accessToken;
-  const spreadsheetId = spreadsheetId;
+  const token = accessToken;
+  const id = spreadsheetId;
   const range = "Sheet1!A1:C1";
 
   const values = [[nik, nama, ttl]];
 
   const response = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/${range}:append?valueInputOption=RAW`,
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
