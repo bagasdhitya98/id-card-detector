@@ -1,19 +1,17 @@
 const authorize = async () => {
-  console.log("GOOGLE_CLIENT_ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-  console.log("GOOGLE_SECRET_KEY:", import.meta.env.VITE_GOOGLE_SECRET_KEY);
-  console.log("GOOGLE_URL:", import.meta.env.VITE_GOOGLE_URL);
-
   const params = new URLSearchParams();
-  params.append("client_id", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-  //   params.append("client_secret", import.meta.env.VITE_GOOGLE_SECRET_KEY);
-  params.append("redirect_uri", import.meta.env.VITE_GOOGLE_URL);
+  params.append(
+    "client_id",
+    "894371863717-fqa95n9tp0f7g40lumdtom5gtl89neim.apps.googleusercontent.com"
+  );
+  params.append("redirect_uri", "https://id-card-detector.netlify.app");
   params.append("response_type", "code");
   params.append("access_type", "offline");
   params.append("scope", "https://www.googleapis.com/auth/spreadsheets");
 
   const authUrl = `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
 
-  window.location.href = authUrl;
+  return authUrl;
 };
 
 export default authorize;
