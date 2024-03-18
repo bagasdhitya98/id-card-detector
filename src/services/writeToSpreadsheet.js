@@ -1,7 +1,12 @@
-const writeToSpreadsheet = async (nik, nama, ttl) => {
-  const accessToken = "YOUR_ACCESS_TOKEN"; // Token OAuth yang diperoleh setelah otorisasi
-
-  const spreadsheetId = "YOUR_SPREADSHEET_ID";
+const writeToSpreadsheet = async (
+  nik,
+  nama,
+  ttl,
+  accessToken,
+  spreadsheetId
+) => {
+  const accessToken = accessToken;
+  const spreadsheetId = spreadsheetId;
   const range = "Sheet1!A1:C1";
 
   const values = [[nik, nama, ttl]];
