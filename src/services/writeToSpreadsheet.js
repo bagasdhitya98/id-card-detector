@@ -45,6 +45,7 @@ const writeToSpreadsheet = async (
       };
     }
   } catch (error) {
+    console.log(error);
     return {
       message: "An error occurred : " + error,
       status: "error",
