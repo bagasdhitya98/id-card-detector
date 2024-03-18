@@ -70,8 +70,25 @@ const App = () => {
   };
 
   const exportToSheet = () => {
-    authorizeGoogle();
-    // writeToSpreadsheet(result.nik, result.nama, result.ttl);
+    const accessToken =
+      "0AeaYSHBe__4r1xz6wiTx4dnRgrMifz05KAVsQ_AChyZz7hILDADLZHKGksoePgZERp_eAg";
+    const spreadsheetId = "1tvLMfI6bcKXt5THDCKPspeffC47q_aztErhJ6whvoOM";
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const code = urlParams.get("code");
+
+    if (!code) {
+      authorizeGoogle();
+    } else {
+      writeToSpreadsheet(
+        result.nik,
+        result.nama,
+        result.ttl,
+        accessToken,
+        spreadsheetId
+      );
+    }
   };
 
   return (
