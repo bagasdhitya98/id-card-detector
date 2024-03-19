@@ -8,7 +8,11 @@ const App = () => {
   const [image, setImage] = useState(null);
   const [text, setText] = useState("");
   const [showAuthPopup, setShowAuthPopup] = useState(false);
-  const [result, setResult] = useState({ nik: "", nama: "", ttl: "" });
+  const [information, setInformation] = useState({
+    nik: "",
+    nama: "",
+    ttl: "",
+  });
   const [auth, setAuth] = useState(null);
 
   const handleImageChange = (e) => {
@@ -50,7 +54,7 @@ const App = () => {
             ttl = line.substring(16).trim();
           }
         });
-        setResult({ nik: nik, nama: nama, ttl: ttl });
+        setInformation({ nik: nik, nama: nama, ttl: ttl });
         setText(`NIK: ${nik}\nName: ${nama}\nPlace/Date of Birth: ${ttl}`);
       })
       .catch((error) => {
@@ -82,9 +86,9 @@ const App = () => {
       authorizeGoogle();
     } else {
       const result = await writeToSpreadsheet(
-        result.nik,
-        result.nama,
-        result.ttl,
+        information.nik,
+        information.nama,
+        information.ttl,
         accessToken,
         spreadsheetId
       );
