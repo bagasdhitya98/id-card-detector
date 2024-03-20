@@ -30,14 +30,17 @@ const writeToSpreadsheet = async (
         }),
       }
     );
-
+    console.log("response raw : ", response);
     if (response.ok) {
       const data = await response.json();
+      console.log("data : ", data);
+      console.log("why success : ", response.statusText);
       return {
         message: `${data.updates.updatedCells} cells updated.`,
         status: "success",
       };
     } else {
+      console.log("why error : ", response.statusText);
       return {
         message: "Something went wrong : " + response.status,
         details: response.statusText,
@@ -45,7 +48,7 @@ const writeToSpreadsheet = async (
       };
     }
   } catch (error) {
-    console.log(error);
+    console.log("error : ", error);
     return {
       message: "An error occurred : " + error,
       status: "error",
