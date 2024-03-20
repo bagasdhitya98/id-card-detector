@@ -74,8 +74,8 @@ const App = () => {
   };
 
   const exportToSheet = async () => {
-    const accessToken =
-      "0AeaYSHBe__4r1xz6wiTx4dnRgrMifz05KAVsQ_AChyZz7hILDADLZHKGksoePgZERp_eAg";
+    // const accessToken =
+    //   "0AeaYSHBe__4r1xz6wiTx4dnRgrMifz05KAVsQ_AChyZz7hILDADLZHKGksoePgZERp_eAg";
     const spreadsheetId = "1tvLMfI6bcKXt5THDCKPspeffC47q_aztErhJ6whvoOM";
 
     const queryString = window.location.search;
@@ -85,19 +85,42 @@ const App = () => {
     if (!code) {
       authorizeGoogle();
     } else {
-      const result = await writeToSpreadsheet(
-        information.nik,
-        information.nama,
-        information.ttl,
-        accessToken,
-        spreadsheetId
-      );
-      if (result.status === "success") {
-        alert("Cells updated!");
-      } else if (result.status === "failed") {
-        alert("Failed to update cells : ", result.message);
-      } else {
-        alert("Something went wrong :", result.message);
+      const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          client_id:
+            "894371863717-fqa95n9tp0f7g40lumdtom5gtl89neim.apps.googleusercontent.com",
+          client_secret: import.meta.env.VITE_GOOGLE_SECRET_KEY,
+          code: code,
+          grant_type: "authorization_code",
+          redirect_uri: "https://id-card-detector.netlify.app",
+        }),
+      });
+
+      const tokenData = await tokenResponse.json();
+      const accessToken = tokenData.access_token;
+      const refreshToken = tokenData.refresh_token;
+
+      console.log("access : ", accessToken);
+
+      if (accessToken) {
+        const result = await writeToSpreadsheet(
+          information.nik,
+          information.nama,
+          information.ttl,
+          accessToken,
+          spreadsheetId
+        );
+        if (result.status === "success") {
+          alert("Cells updated!");
+        } else if (result.status === "failed") {
+          alert("Failed to update cells : ", result.message);
+        } else {
+          alert("Something went wrong :", result.message);
+        }
       }
     }
   };
