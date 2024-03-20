@@ -102,7 +102,6 @@ const App = () => {
 
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
-      const refreshToken = tokenData.refresh_token;
 
       console.log("access : ", accessToken);
 
